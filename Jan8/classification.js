@@ -27,18 +27,28 @@ async function readData() {
 
     return flattenedDataset , numOfFeatures;
 }
-function createModel(numOfFeatures) {
+function createModel() {
 
     const model = tf.sequential();
-    model.add(tf.layers.dense({
-        units: 100,
-        inputShape: [numOfFeatures],
-        activation: "softmax"
-    }));
+    let hidden = tf.layers.dense({
+        units: 16,
+        activation: 'sigmoid',
+        inputDim: [2]
+    });
+    let output = tf.layers.dense({
+        units: 9,
+        activation: 'softmax',
+    });
+    model.add(hidden);
+    model.add(output);
+
+    const lr = 0.2;
+    const optimaizer = tf.train.sgd(lr);
+
     model.compile({
-        loss: 'categoricalCrossentropy',
-        optimizer: tf.train.sgd(0.000001)
-    })
+        optimaizer: optimaizer,
+        loss: 'categoricalCrossentropy'
+    });
     return model
 }
 
