@@ -1,7 +1,6 @@
 {
   "name": "jan7",
   "version": "1.0.0",
-  "description": "",
   "main": "createModel.js",
   "dependencies": {
     "@tensorflow/tfjs-node": "^1.5.1",
@@ -12,5 +11,6 @@
     "test": "jest"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "description": ""
 }
