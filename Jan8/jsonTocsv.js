@@ -1,7 +1,7 @@
 const request = require('request');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
-function convertJsonToCSV() {
+
     request({
         url: 'https://jan08-782c3.firebaseio.com/morning.json',
         json: true
@@ -22,7 +22,7 @@ function convertJsonToCSV() {
 
         toFile(jsonArr)
     });
-}
+
 
 
 
@@ -53,4 +53,3 @@ function toFile(json) {
 
 }
 
- module.exports = convertJsonToCSV;

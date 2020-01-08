@@ -1,46 +1,52 @@
-const tf = require('@tensorflow/tfjs');
+const tf = require('@tensorflow/tfjs-node');
+
 
 async function createData(filename) {
-    const dataset = tf.data.csv(filename, {
-        hasHeader: true
-    });
+    const dataset = tf.data.csv('file://./' + filename, {hasHeader: true});
     const v = await dataset.take(2).toArray();
-    
+    v.forEach((line) => {
+        console.log(line);  
+    });
+    const xs = [];
+    const ys = [];
+    for (var i = 0; i <= num_pts; i++) {
+        xs.push(i);
+        ys.push(2 * i + Math.random());
+    }
+
+    return { xs,ys };
+
 }
 
-function trainModel(filename) {
+async function trainModel(filename,xs,ys) {
     const model = tf.sequential();
     model.add(
       tf.layers.dense({
         units: num_nodes,
-        activation: "relu", 
+        activation: "sigmoid",
         inputShape: [1]
       })
     );
     model.add(tf.layers.dense({ units: 1, activation: "linear" }));
     model.compile({ optimizer: "sgd", loss: "meanSquaredError" });
-    console.dir(model)
-
+    
+    const loss_arr = [];
     const tf_xs = tf.tensor1d(xs);
     const tf_ys = tf.tensor1d(ys);
-  
+
     await model.fit(tf_xs, tf_ys, {
-      epochs: epochs,
-      callbacks: {
-        onEpochEnd: (epoch, log) => loss_arr.push(log.loss)
-      }
+        epochs: 500,
+        callbacks: {
+            onEpochEnd: (epochs, log) => loss_ass.push(log.loss)
+        }
     });
-    return model,loss_arr;
+    hist = tf.summary.histogram
+
+    return model,hist;
 }
 
-function predictModel(model, xv) {
-    const tf_xv = tf.tensor1d(xv);
-    const yv = model.predict(tf_xv).dataSync();
-    return yv;
-}
-createData('https://storage.googleapis.com/tf-datasets/titanic/train.csv')
-module.exports = {
-  createData,
-  trainModel,
-  predictModel
+function predict(model,xv) {
+    const tf_xv = tf.tensor1d(xv)
+    yv = model.predict(tf_xv).dataSync();
+    return yv
 }
