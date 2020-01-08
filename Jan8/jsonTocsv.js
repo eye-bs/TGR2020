@@ -53,4 +53,4 @@ function toFile(json) {
 
 }
 
-// module.exports = convertJsonToCSV;
+ module.exports = convertJsonToCSV;
