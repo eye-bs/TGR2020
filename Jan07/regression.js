@@ -18,7 +18,7 @@ function createModel(num_nodes) {
   model.add(
     tf.layers.dense({
       units: num_nodes,
-      activation: "relu", //relusigmoid
+      activation: "relu", //sigmoid
       inputShape: [1]
     })
   );
@@ -39,14 +39,12 @@ async function trainModel(model, xs, ys, epochs) {
       onEpochEnd: (epoch, log) => loss_arr.push(log.loss)
     }
   });
-  console.dir(loss_arr)
   return loss_arr;
 }
 
 function predictModel(model, xv) {
   const tf_xv = tf.tensor1d(xv);
   const yv = model.predict(tf_xv).dataSync();
-  console.log('prediucccccc;  ' + yv)
   return yv;
 }
 
@@ -62,17 +60,17 @@ function plotResults(xv, yv) {
   });
 }
 
-async function run() {
-  const data = createData(100);
-  const model = createModel(200);
-  const loss_arr = await trainModel(model, data.xs, data.ys, 5000);
-  const yv = [...predictModel(model, data.xs)];
-  plotResults(data.xs, yv);
-}
-run()
-// module.exports = {
-//   createData,
-//   createModel,
-//   trainModel,
-//   predictModel
+// async function run() {
+//   const data = createData(100);
+//   const model = createModel(200);
+//   const loss_arr = await trainModel(model, data.xs, data.ys, 5000);
+//   const yv = [...predictModel(model, data.xs)];
+//   plotResults(data.xs, yv);
 // }
+// run()
+module.exports = {
+  createData,
+  createModel,
+  trainModel,
+  predictModel
+}

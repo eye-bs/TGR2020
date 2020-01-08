@@ -39,20 +39,18 @@ async function trainModel(model, xs, ys, epochs) {
       onEpochEnd: (epoch, log) => loss_arr.push(log.loss)
     }
   });
-  console.dir(loss_arr)
   return loss_arr;
 }
 
 function predictModel(model, xv) {
   const tf_xv = tf.tensor1d(xv);
   const yv = model.predict(tf_xv).dataSync();
-  console.log('prediucccccc;  ' + yv)
   return yv;
 }
 
 function plotResults(xv, yv) {
   var data = [{ x: xv, y: yv, type: "line" }];
-  var layout = { fileopt: "overwrite", filename: "TopGun Ob-See-It-2020" };
+  var layout = { fileopt: "overwrite", filename: "Top Gun Ob" };
   console.log(xv);
   console.log([...yv]);
 
