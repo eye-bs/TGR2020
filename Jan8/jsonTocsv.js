@@ -3,27 +3,29 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const tf = require('@tensorflow/tfjs-node');
 
 
+async function getJsonBLE() {
+    request({
+        url: 'https://jan08-782c3.firebaseio.com/morning.json',
+        json: true
+    }, function (err, res, json) {
+        if (err) {
+            throw err;
+        }
 
-// request({
-//     url: 'https://jan08-782c3.firebaseio.com/morning.json',
-//     json: true
-// }, function (err, res, json) {
-//     if (err) {
-//         throw err;
-//     }
+        var keys = Object.keys(json);
+        var jsonArr = [];
 
-//     var keys = Object.keys(json);
-//     var jsonArr = [];
+        for (let i = 0; i < keys.length; i++) {
+            var topic = json[keys[i]].topic;
+            var split = topic.split("/");
+            json[keys[i]].topic = split[4]
+            jsonArr.push(json[keys[i]]);
+        }
 
-//     for (let i = 0; i < keys.length; i++) {
-//         var topic = json[keys[i]].topic;
-//         var split = topic.split("/");
-//         json[keys[i]].topic = split[4]
-//         jsonArr.push(json[keys[i]]);
-//     }
+        toFile(jsonArr)
+    });
+}
 
-//     toFile(jsonArr)
-// });
 
 
 
@@ -68,7 +70,7 @@ async function getData() {
         if (time == stackTime) {
             ob[macOf] = rssi
         } else {
-            if(ob.user != undefined){
+            if (ob.user != undefined) {
                 arr.push(ob);
             }
             ob.board12 = ob.board12 == undefined ? -404 : ob.board12
@@ -116,7 +118,7 @@ async function run() {
             title: 'board33'
         }
     ]
-     toFile(labelJson, "label.csv", headerLabel)
+    toFile(labelJson, "label.csv", headerLabel)
 
 }
 
