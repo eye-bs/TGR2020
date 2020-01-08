@@ -89,18 +89,29 @@ async function createData(filename) {
     return xs , ys
 }
 
-function createModel(num_nodes) {
-  const model = tf.sequential();
-  model.add(
-    tf.layers.dense({
-      units: num_nodes,
-      activation: "relu",
-      inputShape: [1]
-    })
-  );
-  model.add(tf.layers.dense({ units: 1, activation: "linear" }));
-  model.compile({ optimizer: "sgd", loss: "meanSquaredError" });
-  return model;
+function createModel() {
+
+    const model = tf.sequential();
+    let hidden = tf.layers.dense({
+        units: 16,
+        activation: 'sigmoid',
+        inputDim: [6]
+    });
+    let output = tf.layers.dense({
+        units: 9,
+        activation: 'softmax',
+    });
+    model.add(hidden);
+    model.add(output);
+
+    const lr = 0.2;
+    const optimaizer = tf.train.sgd(lr);
+
+    model.compile({
+        optimaizer: optimaizer,
+        loss: 'categoricalCrossentropy'
+    });
+    return model
 }
 
 async function trainModel(model, xs, ys, epochs) {
