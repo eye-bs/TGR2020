@@ -25,10 +25,9 @@ async function readData() {
         rssi.push(data_rssi);
         labelR.push(near_arr)
     });
-    console.log(labelR)
     const xs = tf.tensor2d(rssi);//ไม่แน่ใจ
     // const ys = tf.oneHot(tf.tensor2d(labelR,'int32'))//ไม่แน่ใจ
-    const ys = tf.tensor1d(labelR);
+    const ys = tf.tensor2d(labelR);
     return { xs, ys, rssi };
 }
 
@@ -39,17 +38,17 @@ function createModel() {
     model.add(tf.layers.dense({
         inputShape: [4],
         activation: "sigmoid",
-        units: 4,
+        units: 16,
     }))
     model.add(tf.layers.dense({
-        activation: "relu",
-        units: 1,
+        activation: "sigmoid",
+        units: 4,
     }))
-
-    model.summary()
+    model.summary();
     model.compile({
-        loss: "meanSquaredError",
-        optimizer: tf.train.sgd(0.2),
+        loss: "categoricalCrossentropy",
+        optimizer: tf.train.adam(),
+        lr: 0.1
     })
     return model
 }
@@ -76,14 +75,10 @@ function createModel() {
 
 async function trainModel(model, xs, ys) {
 
-    model.fit(xs, ys, { epochs: 200 })
-        .then((history) => {
-            // console.log(history)
-            const input = tf.tensor2d([-404,-404,-80,-53], [1, 4]);
-            model.predict(input).print()
-            trainingData2 = [-1, -2, -3, -4]
-            // model.predict(trainingData2).print()
-        })
+ 
+        let res = await model.fit(xs, ys, {epochs: 500});
+      
+        
     //         }
     //     }
     // }
@@ -104,22 +99,19 @@ async function trainModel(model, xs, ys) {
     // return loss_arr;
 }
 
-// function predictModel(model, xs) {
-//     const tf_xv = tf.tensor2d(xs); //ไม่แน่ใจ 
-//     const yv = model.predict(tf_xv);
-//     let index = yv.argMax(1).dataSync()[0];
-//     console.log(index)
-//     let label = class_names[index]
-//     console.log(label);
-//     return yv, label;
-// }
+function predictModel(model, xs) {
+    const testing = tf.tensor2d([[-100,-89,-64,-100]]);
+    return model.predict(testing)
+}
 
 async function run() {
     const data = await readData();
     const model = createModel();
     const loss_arr = await trainModel(model, data.xs, data.ys);
-    // const yv = [...predictModel(model, data.rssi)];
-    // console.log(yv)
+    model.save('file://model-v1')
+    var yv   = predictModel(model, data.rssi)
+
+    console.log(yv.arraySync())
 }
 
 module.exports = {

@@ -87,10 +87,10 @@ async function getData() {
             if (ob.user != undefined) {
                 arr.push(ob);
             }
-            ob.gate12 = ob.gate12 == undefined ? -404 : ob.gate12
-            ob.gate15 = ob.gate15 == undefined ? -404 : ob.gate15
-            ob.gate30 = ob.gate30 == undefined ? -404 : ob.gate30
-            ob.gate33 = ob.gate33 == undefined ? -404 : ob.gate33
+            ob.gate12 = ob.gate12 == undefined ? -100 : ob.gate12
+            ob.gate15 = ob.gate15 == undefined ? -100 : ob.gate15
+            ob.gate30 = ob.gate30 == undefined ? -100 : ob.gate30
+            ob.gate33 = ob.gate33 == undefined ? -100 : ob.gate33
 
             var compare = [ob.gate12 , ob.gate15 , ob.gate30 , ob.gate33];
             var newCP = [1,0,0,0];
