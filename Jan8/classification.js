@@ -33,6 +33,7 @@ async function readData() {
     const ys = tf.tensor1d(labelR, 'int32 ')//ไม่แน่ใจ
     return { xs, ys };
 }
+
 function createModel() {
 
     const model = tf.sequential();
@@ -57,7 +58,6 @@ function createModel() {
     });
     return model
 }
-
 
 async function trainModel(model, xs, ys) {
     // const options = {
@@ -101,3 +101,24 @@ function predictModel(model,xs) {
     console.log(label);
     return yv, label;
 }
+
+async function run() {
+  const data = await createData('BLEdata.csv');
+  const model = createModel(200);
+  const loss_arr = await trainModel(model, data.xs, data.ys, 5000);
+  const yv = [...predictModel(model, data.xs)];
+  console.log(yv)
+}
+
+module.exports = {
+  createData,
+  createModel,
+  trainModel,
+  predictModel
+}
+
+run()
+  .then(() => {
+    console.log("RUN SUCCESSFUL");
+  })
+  .catch(err => console.log(err));
