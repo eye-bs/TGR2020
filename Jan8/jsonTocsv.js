@@ -75,16 +75,19 @@ async function getData() {
             ob.gate33 = ob.gate33 == undefined ? -404 : ob.gate33
 
             var compare = [ob.gate12 , ob.gate15 , ob.gate30 , ob.gate33];
+            var newCP = [1,0,0,0];
             var keys = [12,15,30,33]
             var near = keys[0];
-            var stack = compare[0]
+            var stack = 0
             for(let j = 1; j <= compare.length; j++){
-                if(stack < compare[j]){
-                    stack = compare[j]
+                if(compare[stack] < compare[j]){
+                    newCP[j] = 1
+                    newCP[stack] = 0
+                    stack = j
                     near = keys[j]
                 }
             }
-            ob.near = near;
+            ob.near = newCP;
             stackTime = time;
             ob = {};
             ob["user"] = team
