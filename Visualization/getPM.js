@@ -29,7 +29,19 @@ function getPM(position){
         origin: new google.maps.Point(0,0), // origin
         anchor: new google.maps.Point(0, 0) // anchor
     };
+    var circel = {
+        url: "images/Good.png", // url
+        scaledSize: new google.maps.Size(150, 150), // scaled size
+        origin: new google.maps.Point(0,0), // origin
+        anchor: new google.maps.Point(0, 0) // anchor
+    };
     sensor.then(data =>{
+        var radius = new google.maps.Marker({
+            position: pmArr[position],
+            title: data.pm + "",
+            icon: circel,
+            map: map
+          });
         var marker = new google.maps.Marker({
             position: pmArr[position],
             title: data.pm + "",
