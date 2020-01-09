@@ -26,10 +26,6 @@ async function getJsonBLE() {
     });
 }
 
-
-
-
-
 function toFile(json, filename, header) {
     const csvWriter = createCsvWriter({
         path: filename,
@@ -51,10 +47,10 @@ async function getData() {
     var xs = [];
     var ys = [];
     var mapAddress = {
-        "80:E1:26:07:C4:0A": "board15",
-        "80:E1:26:07:D2:6F": "board30",
-        "80:E1:26:07:E3:79": "board12",
-        "80:E1:26:07:E0:F2": "board33"
+        "80:E1:26:07:C4:0A": "gate15",
+        "80:E1:26:07:D2:6F": "gate30",
+        "80:E1:26:07:E3:79": "gate12",
+        "80:E1:26:07:E0:F2": "gate33"
     }
     var stackTime = ""
     var arr = [];
@@ -73,11 +69,22 @@ async function getData() {
             if (ob.user != undefined) {
                 arr.push(ob);
             }
-            ob.board12 = ob.board12 == undefined ? -404 : ob.board12
-            ob.board15 = ob.board15 == undefined ? -404 : ob.board15
-            ob.board30 = ob.board30 == undefined ? -404 : ob.board30
-            ob.board33 = ob.board33 == undefined ? -404 : ob.board33
+            ob.gate12 = ob.gate12 == undefined ? -404 : ob.gate12
+            ob.gate15 = ob.gate15 == undefined ? -404 : ob.gate15
+            ob.gate30 = ob.gate30 == undefined ? -404 : ob.gate30
+            ob.gate33 = ob.gate33 == undefined ? -404 : ob.gate33
 
+            var compare = [ob.gate12 , ob.gate15 , ob.gate30 , ob.gate33];
+            var keys = [12,15,30,33]
+            var near = keys[0];
+            var stack = compare[0]
+            for(let j = 1; j <= compare.length; j++){
+                if(stack < compare[j]){
+                    stack = compare[j]
+                    near = keys[j]
+                }
+            }
+            ob.near = near;
             stackTime = time;
             ob = {};
             ob["user"] = team
@@ -86,7 +93,6 @@ async function getData() {
         }
 
     }
-    // console.log(arr)
     return arr
 }
 
@@ -102,20 +108,24 @@ async function run() {
             title: 'timestamp'
         },
         {
-            id: 'board12',
-            title: 'board12'
+            id: 'gate12',
+            title: 'gate12'
         },
         {
-            id: 'board15',
-            title: 'board15'
+            id: 'gate15',
+            title: 'gate15'
         },
         {
-            id: 'board30',
-            title: 'board30'
+            id: 'gate30',
+            title: 'gate30'
         },
         {
-            id: 'board33',
-            title: 'board33'
+            id: 'gate33',
+            title: 'gate33'
+        },
+        {
+            id: 'near',
+            title: 'near'
         }
     ]
     toFile(labelJson, "label.csv", headerLabel)
