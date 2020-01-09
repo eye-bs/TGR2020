@@ -1,27 +1,36 @@
-const tf = require('@tensorflow/tfjs');
+const tf = require('@tensorflow/tfjs-node');
 
 async function readData() {
 
-    // const dataset = tf.data.csv('file://./BLEdata.csv', { hasHeader: true });
-    // for (let record of dataset) {
-    //     let data_rssi = [record.device, record.board12, record.board15, record.board30, record.board33];
-    //     rssi.push(data_rssi);
-    //     labelR.push(record.near)
-    // }
+    // const outputData = tf.tensor2d(iris.map(item => [
+    //     item.near === "12" ? 1 : 0,
+    //     item.near === "15" ? 1 : 0,
+    //     item.near === "30" ? 1 : 0,
+    //     item.near === "33" ? 1 : 0,
+    // ]))
+    // return { xs, ys };
+    data = []
+    const rssi = [];
+    const labelR = [];
 
-    const trainingData = tf.tensor2d(iris.map(item => [
-        item.board12, item.board15, item.board30, item.board33,
-    ]))
-    const outputData = tf.tensor2d(iris.map(item => [
-        item.near === "12" ? 1 : 0,
-        item.near === "15" ? 1 : 0,
-        item.near === "30" ? 1 : 0,
-        item.near === "33" ? 1 : 0,
-    ]))
-    const testingData = tf.tensor2d(irisTesting.map(item => [
-        item.board12, item.board15, item.board30, item.board33,
-    ]))
-    return { xs, ys };
+    const dataset = tf.data.csv('file://./label.csv', { hasHeader: true });
+    const v = await dataset.toArray();
+    v.forEach((line) => {
+        let data_rssi = [line.gate12, line.gate15, line.gate30, line.gate33];
+        let data_near = line.near
+        near_arr = data_near.split(",")
+        for (let i = 0; i < near_arr.length; i++) {
+            near_arr[i] = parseInt(near_arr[i])
+        }
+        rssi.push(data_rssi);
+        labelR.push(near_arr)
+    });
+
+    console.log(labelR)
+    const xs = tf.tensor2d(rssi);//ไม่แน่ใจ
+    // const ys = tf.oneHot(tf.tensor2d(labelR,'int32'))//ไม่แน่ใจ
+    const ys = tf.tensor2d(labelR, 'int32');
+    return { xs, ys, rssi };
 }
 
 function createModel() {
@@ -49,16 +58,53 @@ function createModel() {
     return model
 }
 
+// async function createModel(xTrain, yTrain, xTest, yTest) {
+//     ui.status('Training model... Please wait.');
+
+//     const params = ui.loadTrainParametersFromUI();
+
+//     // Define the topology of the model: two dense layers.
+//     const model = tf.sequential();
+//     model.add(tf.layers.dense(
+//         {units: 10, activation: 'sigmoid', inputShape: [xTrain.shape[1]]}));
+//     model.add(tf.layers.dense({units: 3, activation: 'softmax'}));
+//     model.summary();
+
+//     const optimizer = tf.train.adam(params.learningRate);
+//     model.compile({
+//       optimizer: optimizer,
+//       loss: 'categoricalCrossentropy',
+//       metrics: ['accuracy'],
+//     });
+// }
+
 async function trainModel(model, xs, ys) {
 
-    model.fit(trainingData, outputData, { epochs: 100 })
-    .then((history) => {
-        // console.log(history)
-        model.predict(testingData).print()
-        trainingData2 = ['board12' = -1,'board15' = -2,'board15' = -3,'board15' = -4 ]
-        model.predict(trainingData2).print()
-    })
-    return loss_arr;
+    model.fit(xs, ys, { epochs: 100 })
+        .then((history) => {
+            // console.log(history)
+            model.predict(testingData).print()
+            trainingData2 = [-1, -2, -3, -4]
+            model.predict(trainingData2).print()
+        })
+    //         }
+    //     }
+    // }
+    // await model.fit(xs, ys, options).then(results => {
+    //     console.log(results.history.loss);
+    // })
+    // const loss_arr = [];
+    // await model.fit(xs, ys, {
+    //     epochs: 30,
+    //     shuffle: true,
+    //     callbacks: {
+    //         onTrainBegin: () => console.log('train start'),
+    //         onTrainEnd: () => console.log('train complete'),
+    //         onBatchEnd: tf.nextFrame,
+    //         onEpochEnd: (epoch, log) => loss_arr.push(log.loss)
+    //     }
+    // });
+    // return loss_arr;
 }
 
 // function predictModel(model, xs) {
@@ -72,18 +118,18 @@ async function trainModel(model, xs, ys) {
 // }
 
 async function run() {
-    const data = await createData('BLEdata.csv');
-    const model = createModel(200);
-    const loss_arr = await trainModel(model, data.xs, data.ys, 5000);
-    const yv = [...predictModel(model, data.xs)];
+    const data = await readData();
+    const model = createModel();
+    const loss_arr = await trainModel(model, data.xs, data.ys);
+    const yv = [...predictModel(model, data.rssi)];
     console.log(yv)
 }
 
 module.exports = {
-    createData,
+    readData,
     createModel,
     trainModel,
-    // predictModel
+    predictModel
 }
 
 run()
