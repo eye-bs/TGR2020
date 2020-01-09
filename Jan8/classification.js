@@ -2,13 +2,6 @@ const tf = require('@tensorflow/tfjs-node');
 
 async function readData() {
 
-    // const outputData = tf.tensor2d(iris.map(item => [
-    //     item.near === "12" ? 1 : 0,
-    //     item.near === "15" ? 1 : 0,
-    //     item.near === "30" ? 1 : 0,
-    //     item.near === "33" ? 1 : 0,
-    // ]))
-    // return { xs, ys };
     data = []
     const rssi = [];
     const labelR = [];
@@ -25,11 +18,15 @@ async function readData() {
         rssi.push(data_rssi);
         labelR.push(near_arr)
     });
-
-    console.log(labelR)
     const xs = tf.tensor2d(rssi);//ไม่แน่ใจ
-    // const ys = tf.oneHot(tf.tensor2d(labelR,'int32'))//ไม่แน่ใจ
-    const ys = tf.tensor2d(labelR, 'int32');
+    const ys = tf.tensor2d(iris.map(item => [
+        item.near === '12' ? 1 : 0,
+        item.near === '15' ? 1 : 0,
+        item.near === '30' ? 1 : 0,
+        item.near === '33' ? 1 : 0
+    
+    ]), 'int32')
+
     return { xs, ys, rssi };
 }
 
@@ -40,20 +37,16 @@ function createModel() {
     model.add(tf.layers.dense({
         inputShape: [4],
         activation: "sigmoid",
-        units: 5,
-    }))
-    model.add(tf.layers.dense({
-        inputShape: [5],
-        activation: "sigmoid",
-        units: 3,
+        units: 4,
     }))
     model.add(tf.layers.dense({
         activation: "sigmoid",
         units: 3,
     }))
+    model.summary();
     model.compile({
         loss: "meanSquaredError",
-        optimizer: tf.train.adam(1),
+        optimizer: tf.train.adam(0.1),
     })
     return model
 }
@@ -80,42 +73,16 @@ function createModel() {
 
 async function trainModel(model, xs, ys) {
 
-    model.fit(xs, ys, { epochs: 100 })
-        .then((history) => {
-            // console.log(history)
-            model.predict(testingData).print()
-            trainingData2 = [-1, -2, -3, -4]
-            model.predict(trainingData2).print()
-        })
-    //         }
-    //     }
-    // }
-    // await model.fit(xs, ys, options).then(results => {
-    //     console.log(results.history.loss);
-    // })
-    // const loss_arr = [];
-    // await model.fit(xs, ys, {
-    //     epochs: 30,
-    //     shuffle: true,
-    //     callbacks: {
-    //         onTrainBegin: () => console.log('train start'),
-    //         onTrainEnd: () => console.log('train complete'),
-    //         onBatchEnd: tf.nextFrame,
-    //         onEpochEnd: (epoch, log) => loss_arr.push(log.loss)
-    //     }
-    // });
-    // return loss_arr;
+    // model.fit(xs, ys, { epochs: 100 })
+    //     .then((history) => {
+    //         // console.log(history)
+    //         model.predict(testingData).print()
+    //     })
+    for(let i=0;i<40;i++){
+        let res = await model.fit(xs, ys, {epochs: 150});
+        console.log(`Iteration ${i}: ${res.history.loss[0]}`);
+        }
 }
-
-// function predictModel(model, xs) {
-//     const tf_xv = tf.tensor2d(xs); //ไม่แน่ใจ 
-//     const yv = model.predict(tf_xv);
-//     let index = yv.argMax(1).dataSync()[0];
-//     console.log(index)
-//     let label = class_names[index]
-//     console.log(label);
-//     return yv, label;
-// }
 
 async function run() {
     const data = await readData();
@@ -129,7 +96,7 @@ module.exports = {
     readData,
     createModel,
     trainModel,
-    predictModel
+    // predictModel
 }
 
 run()

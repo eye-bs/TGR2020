@@ -1059,46 +1059,43 @@ irisTesting = [
 ]
 // convert/setup our data
 const trainingData = tf.tensor2d(iris.map(item => [
-    item.board12, item.board15, item.board30, item.board33,
-]))
-const outputData = tf.tensor2d(iris.map(item => [
-    item.near === "12" ? 1 : 0,
-    item.near === "15" ? 1 : 0,
-    item.near === "30" ? 1 : 0,
-    item.near === "33" ? 1 : 0,
-]))
-const testingData = tf.tensor2d(irisTesting.map(item => [
-    item.board12, item.board15, item.board30, item.board33,
-]))
-
-// build neural network
-const model = tf.sequential()
-
-model.add(tf.layers.dense({
+    item.sepal_length, item.sepal_width, item.petal_length, item.petal_width,
+  ]))
+  const outputData = tf.tensor2d(iris.map(item => [
+    item.species === "setosa" ? 1 : 0,
+    item.species === "virginica" ? 1 : 0,
+    item.species === "versicolor" ? 1 : 0,
+  ]))
+  const testingData = tf.tensor2d(irisTesting.map(item => [
+    item.sepal_length, item.sepal_width, item.petal_length, item.petal_width,
+  ]))
+  
+  // build neural network
+  const model = tf.sequential()
+  
+  model.add(tf.layers.dense({
     inputShape: [4],
     activation: "sigmoid",
     units: 5,
-}))
-model.add(tf.layers.dense({
+  }))
+  model.add(tf.layers.dense({
     inputShape: [5],
     activation: "sigmoid",
     units: 3,
-}))
-model.add(tf.layers.dense({
+  }))
+  model.add(tf.layers.dense({
     activation: "sigmoid",
     units: 3,
-}))
-model.compile({
+  }))
+  model.compile({
     loss: "meanSquaredError",
-    optimizer: tf.train.adam(1),
-})
-// train/fit our network
-const startTime = Date.now()
-model.fit(trainingData, outputData, { epochs: 100 })
+    optimizer: tf.train.adam(.06),
+  })
+  // train/fit our network
+  const startTime = Date.now()
+  model.fit(trainingData, outputData, {epochs: 100})
     .then((history) => {
-        // console.log(history)
-        model.predict(testingData).print()
-        trainingData2 = ['board12' = -1,'board15' = -2,'board15' = -3,'board15' = -4 ]
-        model.predict(trainingData2).print()
+      // console.log(history)
+      model.predict(testingData).print()
     })
-// test network
+  // test network
