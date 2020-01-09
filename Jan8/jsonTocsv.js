@@ -22,7 +22,25 @@ async function getJsonBLE() {
             jsonArr.push(json[keys[i]]);
         }
 
-        toFile(jsonArr)
+        var headerLabel = [{
+            id: 'mac_addr',
+            title: 'mac'
+        },
+        {
+            id: 'rssi',
+            title: 'rssi'
+        },
+        {
+            id: 'timestamp',
+            title: 'timestamp'
+        },
+        {
+            id: 'topic',
+            title: 'team'
+        }
+    ]
+
+        toFile(jsonArr , "BLEdata.csv" , headerLabel)
     });
 }
 
@@ -76,7 +94,7 @@ async function getData() {
 
             var compare = [ob.gate12 , ob.gate15 , ob.gate30 , ob.gate33];
             var newCP = [1,0,0,0];
-            var keys = [12,15,30,33]
+            var keys = [1,2,3,4]
             var near = keys[0];
             var stack = 0
             for(let j = 1; j <= compare.length; j++){
@@ -100,6 +118,8 @@ async function getData() {
 }
 
 async function run() {
+
+  // await getJsonBLE()
 
     var labelJson = await getData()
     var headerLabel = [{
