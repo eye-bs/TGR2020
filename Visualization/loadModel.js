@@ -44,10 +44,18 @@ function selectPredict(array) {
 
 function aqiRank() {
     if (aqi > 300) {
-        status = 'Hazardous'
+        status = 'Hazardous';
     } else if (aqi > 200) {
-        status = 'Very Unhealty'
-    } else if (aqi)
+        status = 'Very Unhealty';
+    } else if (aqi>150) {
+        status = 'Unhealthy';
+    } else if (aqi>100) {
+        status = 'Unhealthy for Sensitive Groups';
+    } else if (aqi>50) {
+        status = 'Moderate';
+    } else {
+        status = 'Good';
+    }
 }
 
 async function loadModel() {
