@@ -15,26 +15,8 @@
         lat: 19.021294,
         lng: 99.897926
     }
-    var pmArr = [position44,position45,position46,position47]
+    var pmArr = [position44,position45,position46,position47];
 
-
-    var house12 = {
-        lat: 19.156391,
-        lng: 99.901938
-    };
-    var house15 = {
-        lat: 19.167139,
-        lng: 99.812591
-    }
-    var house30 = {
-        lat: 19.166467,
-        lng: 99.88956
-    }
-    var house33 = {
-        lat: 19.011284,
-        lng: 99.897956
-    }
-    var houseArr = [house12, house15 , house30,house33]
     var map;
     var infowindow;
     var contentString =
@@ -54,8 +36,6 @@ function initMap() {
       });
     createMarker()
     markerBLE()
-    // getPM44()
-    // getPM45()
     run();
 }
 //https://media.giphy.com/media/rXw2mSDlLUEgM/giphy.gif
@@ -92,6 +72,7 @@ function createMarker(){
               };
             })(marker, i)
           );
+          markerArr.push(marker);
       
         //   var marker2 = new google.maps.Marker({
         //     position: houseArr[i],
